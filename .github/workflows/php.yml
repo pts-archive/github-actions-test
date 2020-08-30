@@ -121,7 +121,7 @@ jobs:
         run: vendor/bin/phpunit --no-coverage
 
 
-  test-8.0:
+  test-php8:
     strategy:
       matrix:
         operating-system: [ubuntu-latest, windows-latest, macos-latest]
