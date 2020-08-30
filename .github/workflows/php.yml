@@ -1,11 +1,22 @@
 name: PHP
 on: [push, pull_request]
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        php-versions: ['7.2', '7.3', '7.4']
+
+    runs-on: ${{ matrix.operating-system }}
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -15,9 +26,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
-            ${{ runner.os }}-php-
+            ${{ runner.os }}-composer-
 
       - name: Install dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
