@@ -3,14 +3,19 @@ on: [push, pull_request]
 jobs:
 
   lint:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.4']
+
+    runs-on: ${{ matrix.operating-system }}
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup PHP, with composer and extensions
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: ${{ matrix.php-versions }}
           tools: phpcs, phpstan
           coverage: none
 
@@ -37,14 +42,19 @@ jobs:
         run: phpstan analyse
 
   coverage:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.4']
+
+    runs-on: ${{ matrix.operating-system }}
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup PHP, with composer and extensions
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: ${{ matrix.php-versions }}
           coverage: xdebug
 
       - name: Validate composer.json and composer.lock
